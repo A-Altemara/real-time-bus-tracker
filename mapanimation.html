@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Add a default marker</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            left: 0;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div class="map-overlay top">
+        <button style="font-size: 2em" onclick="move()">
+            Show stops between MIT and Harvard
+        </button>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoidXNlcm5hbWVzYXJlc3VwZXJoYXJkIiwiYSI6ImNsZ2N0aGRhODByaGczdG56aW1pd3RodnQifQ.3VjF1B4rc92sGD4PCpHJcQ'
+        let busStopData = []
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-71.091542, 42.358862],
+            zoom: 14
+        });
+
+        // const marker = new mapboxgl.Marker()
+        //     .setLngLat([-71.092761, 42.357575])
+        //     .addTo(map)
+
+        const busStops = [
+            [-71.093729, 42.359244],
+            [-71.094915, 42.360175],
+            [-71.095800, 42.360698],
+            [-71.099558, 42.362953],
+            [-71.103476, 42.365248],
+            [-71.106067, 42.366806],
+            [-71.108717, 42.368355],
+            [-71.110799, 42.369192],
+            [-71.113095, 42.370218],
+            [-71.115476, 42.372085],
+            [-71.117585, 42.373016],
+            [-71.118625, 42.374863]
+        ];
+
+        let counter = 0
+        function move() {
+            setTimeout(() => {
+                if (counter >= busStops.length) return
+                marker.setLngLat(busStops[counter])
+                counter++
+                move()
+            }, 1000)
+        }
+
+        map.marker = [];
+
+        // map.getMarker = function(id) {
+        //     return this.markers[id];
+        // }
+
+        // map.setMarker = function(id, marker) {
+        //     this.markers[id] = marker
+        // }
+
+        async function getBusLocations() {
+            const url = 'https://api-v3.mbta.com/vehicles?filter[route]=1&include=trip';
+            const response = await fetch(url);
+            const json = await response.json();
+            console.log(json.data)
+            return json.data;
+        }
+
+        // let busLocationData = []
+        // busLocationData = getBusLocations()
+
+        // console.log("busLocationData:", busLocationData)
+        async function makeArray() {
+            let markarray = []
+            let locationData = await getBusLocations()
+            await locationData.forEach((location) => {
+                let longlat = [location.attributes.longitude, location.attributes.latitude]
+                let locationID = location.id
+                markarray.push(longlat)
+                let marker = new mapboxgl.Marker()
+                    .setLngLat(longlat)
+                    .addTo(map)
+            })
+            console.log(markarray)
+            busStopData = markarray
+            return markarray
+        }
+        makeArray()
+
+        // need to move the marker maker outside of the make array function so that the initial locations can be built and the map popluated.
+
+        function keepMoving(){
+            setTimeout(() =>
+            console.log("thing")
+            // this will need to call the funtion makeArray to reset the busstop data and over ride the markers on the map.
+            )
+        }
+
+    </script>
+
+</body>
+
+</html>
