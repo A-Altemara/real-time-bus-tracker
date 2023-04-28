@@ -23,14 +23,14 @@ async function getBusLocations() {
     const url = 'https://api-v3.mbta.com/vehicles?filter[route]=1&include=trip';
     const response = await fetch(url);
     const json = await response.json();
-    console.log(json.data)
+    // console.log(json.data)
     return json.data;
 }
 
 async function makeArray() {
     let markArray = []
     let locationData = await getBusLocations()
-    map.marker = []
+    busStopData = []
     await locationData.forEach((location) => {
         let longlat = {
             location: [location.attributes.longitude, location.attributes.latitude],
@@ -52,6 +52,7 @@ makeArray()
 
 function keepMoving() {
     setTimeout(() => {
+        busStopData = []
         makeArray()
         keepMoving()
     }, 15000)
