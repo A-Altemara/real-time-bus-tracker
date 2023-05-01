@@ -8,7 +8,7 @@ var map = new mapboxgl.Map({
     zoom: 14
 });
 
-
+// gets location data from API
 async function getBusLocations() {
     const url = 'https://api-v3.mbta.com/vehicles?filter[route]=1&include=trip';
     const response = await fetch(url);
@@ -20,12 +20,12 @@ async function getBusLocations() {
 
 map.marker = [];
 
-// This function should only make the array and not put markers on the map
+// converts location data into array that is usable by MapBox
 async function makeArray(locationData) {
     let markArray = []
-   await locationData.forEach((location) => {
-         let longlat =   [location.attributes.longitude, location.attributes.latitude]
-            markArray.push(longlat)
+    await locationData.forEach((location) => {
+        let longlat = [location.attributes.longitude, location.attributes.latitude]
+        markArray.push(longlat)
     })
     busStopData = markArray
     return markArray
@@ -33,6 +33,7 @@ async function makeArray(locationData) {
 
 let markerArray;
 
+// creates markers on map
 async function updateMarkers(markerArray) {
     removeMarkers(map.marker);
     map.marker = markerArray.map((longlat) => {
@@ -40,10 +41,14 @@ async function updateMarkers(markerArray) {
     });
 }
 
+// removes markers from the map to avoid having to check for existing buses and remove if no longer in service or update positions.
 function removeMarkers(markers) {
     markers.forEach(marker => marker.remove());
-  }
+}
+
 let delay = 0
+//cycles through functions to get postions, clear exiting markers and create new markers each time.
+// optimized with ChapGPT, should be simplified further to avoid the excessive nesting
 function keepMoving() {
     getBusLocations()
         .then((result) => {
@@ -55,7 +60,7 @@ function keepMoving() {
                     .catch((error) => {
                         console.error('Error making array:', error);
                     });
-                    delay = 15000
+                delay = 15000
                 keepMoving();
             }, delay);
         })
