@@ -1,18 +1,23 @@
 # Real Time Bus Tracker
----------------------------
-A program to track the buses that run in real time around the MIT campus.  This uses data from the MTBA API and the Mapbox map set up to work.
+
+---
+
+A program to track the buses that run in real time around the MIT campus. This uses data from the MTBA API and the Mapbox map set up to work.
 
 ## Road Map
+
 Simplify the .then function at the end to reduce nesting make updating easier.
-Updating the map program in the background from Mapbox to another maping programs like
-    - Overpass Maps
-    - Google Maps
+Updating the map program in the background from Mapbox to another maping programs like 
+- Overpass Maps 
+- Google Maps
 Allowing the user to select a specific bus and click on it to change the tracker to red and follow it specifically.
 
 ## How to Run
+
 Drag HTML page into browser window. Markers will load and start updating immediately
 
 ## License
+
 MIT License
 
 Copyright (c) 2023 Airiel Altemara
